@@ -1,23 +1,15 @@
-from flask import Flask, request
-import telegram
+from flask import Flask, jsonify
 import os
 
 app = Flask(__name__)
 
-BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-bot = telegram.Bot(token=BOT_TOKEN)
-
-@app.route('/')
+@app.get("/")
 def home():
     return "Derya Mobile Bot v2 is running 💚"
 
-@app.route('/start', methods=['GET', 'POST'])
-def start():
-    chat_id = request.args.get('chat_id')
-    if chat_id:
-        bot.send_message(chat_id=chat_id, text="Merhaba! Derya Mobile Bot v2 aktif 💬")
-        return "Message sent!"
-    return "No chat_id provided."
+@app.get("/healthz")
+def health():
+    return jsonify(status="ok")
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
